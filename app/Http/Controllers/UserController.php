@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Response;
 
 class UserController extends Controller
 {
@@ -14,7 +15,11 @@ class UserController extends Controller
 
     public function getUsers(Request $request)
     {
-        return 'getUsers';
+        try{
+            
+        } catch(\Exception $e){
+
+        }
     }
 
     public function deleteUsers(Request $request)
