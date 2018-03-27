@@ -10,10 +10,12 @@ interface UserServiceInterface
 
     public function getAllUser(Request $request);
 
-    public function getUser(Request $request);
+    public function getUser($id);
 
-    public function updateUser(Request $request);
+    public function updateUser($id, Request $request);
 
-    public function deleteUser(Request $request);
+    public function deleteUser($id);
+
+    public function deleteUsers(Request $request);
 
 }

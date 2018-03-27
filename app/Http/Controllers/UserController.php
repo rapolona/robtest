@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Exceptions\NoAvailableUserException;
 use App\Exceptions\UserDeleteFailedException;
 use App\Exceptions\UserUpdateFailedException;
+use App\Exceptions\UserCreateFailedException;
 use App\Exceptions\UserInvalidException;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;
 use Response;
+use Illuminate\Support\Facades\Log;
+
 
 class UserController extends Controller
 {
@@ -28,35 +31,85 @@ class UserController extends Controller
     public function getUsers(Request $request)
     {
         try{
-            
+            $users = $this->userService->getAllUser($request);
+            return Response::json(['status'=>'success', 'data' => $users]);
+        } catch(\NoAvailableUserException $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
         } catch(\Exception $e){
-
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
         }
     }
 
     public function deleteUsers(Request $request)
     {
-        return 'deleteUsers';
+        try{
+            $response = $this->userService->deleteUsers($request);
+            return Response::json(['status'=>'success', 'data' => $response]);
+        } catch(\UserDeleteFailedException $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        } catch(\Exception $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        }
     }
 
-    public function getUserDetails(Request $request)
+    public function getUserDetails($id)
     {
-        return 'getUserDetails';
+        try{
+            $user = $this->userService->getUser($id);
+            return Response::json(['status'=>'success', 'data' => $user]);
+        } catch(\NoAvailableUserException $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        } catch(\Exception $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        }
     }
 
     public function addUser(Request $request)
     {
-        return 'addUser';
+        try{
+            $response = $this->userService->createUser($request);
+            return Response::json(['status'=>'success', 'data' => $response]);
+        } catch(\UserCreateFailedException $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        } catch(\Exception $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        }
     }
 
-    public function updateUser(Request $request)
+    public function updateUser($id, Request $request)
     {
-        return 'updateUser';
+        try{
+            $response = $this->userService->updateUser($id, $request);
+            return Response::json(['status'=>'success', 'data' => $response]);
+        } catch(\UserUpdateFailedException $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        } catch(\Exception $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        }
     }
 
-    public function deleteUser(Request $request)
+    public function deleteUser($id)
     {
-        return 'deleteUser';
+        try{
+            $response = $this->userService->deleteUser($id);
+            return Response::json(['status'=>'success', 'data' => $response]);
+        } catch(\UserDeleteFailedException $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        } catch(\Exception $e){
+            Log::error($e->getMessage());
+            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+        }
     }
 
 }
