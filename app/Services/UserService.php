@@ -3,7 +3,10 @@
 namespace App\Services;
 
 
-//use App\Exceptions\UserNotValidException;
+use App\Exceptions\NoAvailableUserException;
+use App\Exceptions\UserDeleteFailedException;
+use App\Exceptions\UserUpdateFailedException;
+use App\Exceptions\UserInvalidException;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;

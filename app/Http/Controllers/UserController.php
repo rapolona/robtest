@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NoAvailableUserException;
+use App\Exceptions\UserDeleteFailedException;
+use App\Exceptions\UserUpdateFailedException;
+use App\Exceptions\UserInvalidException;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;
 use Response;
