@@ -2,12 +2,12 @@
 
 namespace App\Repositories;
 
-use App\Repositories\Contracts\UserInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Models\Users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class UserRepository extends BaseRepository implements UserInterface
+class UsersRepository extends BaseRepository implements UserRepositoryInterface
 {
 
     protected $model;
