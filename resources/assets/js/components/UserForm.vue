@@ -44,7 +44,7 @@
                     <hr />
                 </div>
 
-                <input type="button" value="Register" class="btn btn-info btn-block">
+                <input type="button" @click='register' value="Register" class="btn btn-info btn-block">
 
             </form>
         </div>
@@ -59,12 +59,21 @@
                 user_id : null,
                 firstname : null,
                 lastname: null,
+                username: null,
+                email : null,
+                password : null,
+                address : null,
+                postal_code : null,
+                phone_number : null
             };
         },
         created(){
 
         },
         methods : {
+            register(){
+              alert('register');
+            },
             backToList(){
                 this.$parent.showForm = false;
                 this.$parent.showList = true;
