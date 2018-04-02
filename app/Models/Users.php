@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Users extends Model
 {
-    protected $fillable = ['firstname', 'lastname', 'email'];
+    protected $fillable = ['firstname', 'lastname', 'email', 'username', 'password'];
 
     public function profile()
     {
-        $this->hasOne('App\Models\UserProfile', 'user_id');
+         return $this->hasOne('App\Models\UserProfile', 'user_id');
     }
 }

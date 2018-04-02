@@ -128,23 +128,36 @@
                     this.register();
                 }
             },
+            validateInput(callback){
+                let _self = this;
+                _self.$validator.validateAll().then((result) => {
+                    if(!result){
+                        return;
+                    }
+
+                    callback(result);
+                });
+            },
             register(){
                 let _self = this;
-                console.log(this.user);
-                Vue.axios.post('/api/user/add',  _self.user, this.$parent.tokenHeader ).then((response) => {
-                    _self.msg = response.data.msg;
-                    if(response.data.data.id)
-                        _self.user.id = response.data.data.id
-                }).catch(error => {
-                    _self.msg = error.data.msg;
-                });
+                _self.validateInput(function(){
+                    Vue.axios.post('/api/user/add',  _self.user, this.$parent.tokenHeader ).then((response) => {
+                        _self.msg = response.data.msg;
+                        if(response.data.data.id)
+                            _self.user.id = response.data.data.id
+                    }).catch(error => {
+                        _self.msg = error.data.msg;
+                    });
+                })
             },
             updateUser(){
                 let _self = this;
-                Vue.axios.put('/api/user/${this.user.id}/update',  _self.user, this.$parent.tokenHeader ).then((response) => {
-                    _self.msg = response.data.msg;
-                }).catch(error => {
-                    _self.msg = error.data.msg;
+                _self.validateInput(function(){
+                    Vue.axios.put('/api/user/' + _self.user.id + '/update',  _self.user, this.$parent.tokenHeader ).then((response) => {
+                        _self.msg = response.data.msg;
+                    }).catch(error => {
+                        _self.msg = error.data.msg;
+                    });
                 });
             },
             backToList(){

@@ -54379,7 +54379,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     created: function created() {
         var _self = this;
-        Vue.axios.get('/api/users', this.user, this.$parent.tokenHeader).then(function (response) {
+        Vue.axios.get('/api/users', {}, this.$parent.tokenHeader).then(function (response) {
             _self.users = response.data.data;
         });
     },
@@ -54702,22 +54702,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.register();
             }
         },
+        validateInput: function validateInput(callback) {
+            var _self = this;
+            _self.$validator.validateAll().then(function (result) {
+                if (!result) {
+                    return;
+                }
+
+                callback(result);
+            });
+        },
         register: function register() {
             var _self = this;
-            console.log(this.user);
-            Vue.axios.post('/api/user/add', _self.user, this.$parent.tokenHeader).then(function (response) {
-                _self.msg = response.data.msg;
-                if (response.data.data.id) _self.user.id = response.data.data.id;
-            }).catch(function (error) {
-                _self.msg = error.data.msg;
+            _self.validateInput(function () {
+                Vue.axios.post('/api/user/add', _self.user, this.$parent.tokenHeader).then(function (response) {
+                    _self.msg = response.data.msg;
+                    if (response.data.data.id) _self.user.id = response.data.data.id;
+                }).catch(function (error) {
+                    _self.msg = error.data.msg;
+                });
             });
         },
         updateUser: function updateUser() {
             var _self = this;
-            Vue.axios.put('/api/user/${this.user.id}/update', _self.user, this.$parent.tokenHeader).then(function (response) {
-                _self.msg = response.data.msg;
-            }).catch(function (error) {
-                _self.msg = error.data.msg;
+            _self.validateInput(function () {
+                Vue.axios.put('/api/user/' + _self.user.id + '/update', _self.user, this.$parent.tokenHeader).then(function (response) {
+                    _self.msg = response.data.msg;
+                }).catch(function (error) {
+                    _self.msg = error.data.msg;
+                });
             });
         },
         backToList: function backToList() {

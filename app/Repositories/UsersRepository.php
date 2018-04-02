@@ -4,8 +4,6 @@ namespace App\Repositories;
 
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Models\Users;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class UsersRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -16,6 +14,16 @@ class UsersRepository extends BaseRepository implements UserRepositoryInterface
     {
         parent::__construct($user);
         $this->model = $user;
+    }
+
+    public function getAll()
+    {
+        return $this->model::with('profile')->get();
+    }
+
+    public function getById($id)
+    {
+        return $this->model->with('profile')->findOrfail($id);
     }
 
 }

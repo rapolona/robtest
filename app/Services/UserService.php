@@ -59,7 +59,7 @@ class UserService implements UserServiceInterface
 
     public function getAllUser(Request $request)
     {
-        $users = $this->userRepository->with('profile')->getAll();
+        $users = $this->userRepository->getAll();
  
         if(!$users){
             throw New NoAvailableUserException;
@@ -71,7 +71,7 @@ class UserService implements UserServiceInterface
 
     public function getUser($id)
     {
-        $user = $this->userRepository->with('profile')->getById($id);
+        $user = $this->userRepository->getById($id);
  
         if(!$user){
             throw New UserInvalidException;

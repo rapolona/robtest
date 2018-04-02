@@ -55,7 +55,7 @@
         },
         created(){
             let _self =  this;
-            Vue.axios.get('/api/users',  this.user, this.$parent.tokenHeader ).then((response) => {
+            Vue.axios.get('/api/users', {} , this.$parent.tokenHeader ).then((response) => {
                 _self.users = response.data.data;
             });
         },
