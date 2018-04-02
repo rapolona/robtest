@@ -48,12 +48,16 @@
     export default {
         data : function() {
             return {
+                users : {},
                 ids : [],
                 id  : null
             };
         },
         created(){
-
+            let _self =  this;
+            Vue.axios.post('/api/users', { this.user }).then((response) => {
+                _self.users = response.data;
+            });
         },
         methods : {
             gotToForm(){

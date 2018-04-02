@@ -4,11 +4,12 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import VeeValidate from 'vee-validate';
-import VueAxios from 'axios';
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 import VuejsDialog from 'vuejs-dialog';
 
 Vue.use(VeeValidate);
-Vue.use(VueAxios);
+Vue.use(VueAxios, axios);
 Vue.use(VuejsDialog, {
     html : true,
     okText : 'Proceed',
