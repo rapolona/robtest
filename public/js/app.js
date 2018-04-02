@@ -54439,71 +54439,85 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _c("tbody", [
-              _c("tr", [
-                _c("th", [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.ids,
-                        expression: "ids"
-                      }
-                    ],
-                    attrs: { type: "checkbox", value: "1" },
-                    domProps: {
-                      checked: Array.isArray(_vm.ids)
-                        ? _vm._i(_vm.ids, "1") > -1
-                        : _vm.ids
-                    },
-                    on: {
-                      change: function($event) {
-                        var $$a = _vm.ids,
-                          $$el = $event.target,
-                          $$c = $$el.checked ? true : false
-                        if (Array.isArray($$a)) {
-                          var $$v = "1",
-                            $$i = _vm._i($$a, $$v)
-                          if ($$el.checked) {
-                            $$i < 0 && (_vm.ids = $$a.concat([$$v]))
+            _c(
+              "tbody",
+              _vm._l(_vm.users, function(user) {
+                return _c("tr", [
+                  _c("th", [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.ids,
+                          expression: "ids"
+                        }
+                      ],
+                      attrs: { type: "checkbox" },
+                      domProps: {
+                        value: user.id,
+                        checked: Array.isArray(_vm.ids)
+                          ? _vm._i(_vm.ids, user.id) > -1
+                          : _vm.ids
+                      },
+                      on: {
+                        change: function($event) {
+                          var $$a = _vm.ids,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = user.id,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.ids = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.ids = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
                           } else {
-                            $$i > -1 &&
-                              (_vm.ids = $$a
-                                .slice(0, $$i)
-                                .concat($$a.slice($$i + 1)))
+                            _vm.ids = $$c
                           }
-                        } else {
-                          _vm.ids = $$c
                         }
                       }
-                    }
-                  })
-                ]),
-                _vm._v(" "),
-                _c("td", [_vm._v("1,001")]),
-                _vm._v(" "),
-                _c("td", [_vm._v("Lorem")]),
-                _vm._v(" "),
-                _c("td", [_vm._v("ipsum")]),
-                _vm._v(" "),
-                _c("td", [_vm._v("dolor")]),
-                _vm._v(" "),
-                _c("td", [_vm._v("sit")]),
-                _vm._v(" "),
-                _c("td", [_vm._v("09158953507")]),
-                _vm._v(" "),
-                _c("td", [
-                  _c("button", { staticClass: "btn btn-primary" }, [
-                    _vm._v("Update")
+                    })
                   ]),
                   _vm._v(" "),
-                  _c("button", { staticClass: "btn btn-danger" }, [
-                    _vm._v("Delete")
+                  _c("td", [_vm._v(_vm._s(user.id))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(user.firstname))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(user.username))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(user.email))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(user.profile.address))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(user.profile.phone_number))]),
+                  _vm._v(" "),
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { "data-id": user.id }
+                      },
+                      [_vm._v("Update")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger",
+                        attrs: { "data-id": user.id }
+                      },
+                      [_vm._v("Delete")]
+                    )
                   ])
                 ])
-              ])
-            ])
+              })
+            )
           ])
         ])
       ])

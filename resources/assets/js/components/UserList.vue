@@ -23,17 +23,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th><input type="checkbox" value="1" v-model="ids" /> </th>
-                        <td>1,001</td>
-                        <td>Lorem</td>
-                        <td>ipsum</td>
-                        <td>dolor</td>
-                        <td>sit</td>
-                        <td>09158953507</td>
+                    <tr v-for="user in users">
+                        <th><input type="checkbox" :value="user.id" v-model="ids" /> </th>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.firstname }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.profile.address }}</td>
+                        <td>{{ user.profile.phone_number }}</td>
                         <td>
-                            <button class="btn btn-primary">Update</button>
-                            <button class="btn btn-danger">Delete</button>
+                            <button :data-id="user.id" class="btn btn-primary">Update</button>
+                            <button :data-id="user.id" class="btn btn-danger">Delete</button>
                         </td>
                     </tr>
                     </tbody>
