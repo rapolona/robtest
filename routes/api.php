@@ -23,6 +23,6 @@ Route::delete('/users', 'UserController@deleteUsers');
 Route::prefix('user')->group(function(){
     Route::post('add', 'UserController@addUser');
     Route::get('{id}', 'UserController@getUserDetails');
-    Route::update('{id}/update', 'UserController@updateUser');
+    Route::put('{id}/update', 'UserController@updateUser');
     Route::delete('{id}', 'UserController@deleteUser');
 });

@@ -4,9 +4,19 @@
         <div class="col-md-6">
             <h2 class="sub-header">Users Form</h2>
         </div>
+
         <div class="col-md-6 text-right">
             <button class="btn btn-primary" @click="backToList">Back to User List</button>
         </div>
+
+        <div class="col-md-12" v-if="msg!=null">
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                {{ msg }}
+            </div>
+        </div>
+
         <div class="col-md-12">
             <form role="form">
                 <div class="row">
@@ -27,7 +37,7 @@
                 <div class="row">
                     <div class="col-xs-6 col-sm-6 col-md-6">
                         <div class="form-group" :class="{ 'control' : true }">
-                            <input v-model="user.email" type="text" v-validate="'required|alpha'" name="email" :class="{ 'input' : true, 'is_danger' : errors.has('email')}" id="email" class="form-control input-sm" placeholder="Email">
+                            <input v-model="user.email" type="text" v-validate="'required|email'" name="email" :class="{ 'input' : true, 'is_danger' : errors.has('email')}" id="email" class="form-control input-sm" placeholder="Email">
                             <span v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</span>
                         </div>
                     </div>
@@ -39,15 +49,17 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row"  :class="{ 'control' : true }">
                     <div class="col-xs-6 col-sm-6 col-md-6">
                         <div class="form-group">
-                            <input v-model="user.password" type="password" name="password" id="password" class="form-control input-sm" placeholder="Password">
+                            <input v-model="user.password" v-validate="'required|alpha_num|confirmed:{password_confirmation}'"  type="password" name="password" id="password" class="form-control input-sm" placeholder="Password">
+                            <span v-show="errors.has('password')" class="help is-danger">{{ errors.first('password') }}</span>
                         </div>
                     </div>
                     <div class="col-xs-6 col-sm-6 col-md-6">
                         <div class="form-group">
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-sm" placeholder="Confirm Password">
+                            <input type="password" v-validate="'required|alpha_num'" name="password_confirmation" id="password_confirmation" class="form-control input-sm" placeholder="Confirm Password">
+                            <span v-show="errors.has('password_confirmation')" class="help is-danger">{{ errors.first('password_confirmation') }}</span>
                         </div>
                     </div>
                 </div>
@@ -101,7 +113,8 @@
                     address : null,
                     postal_code : null,
                     phone_number : null
-                }
+                },
+                msg : null
             };
         },
         created(){
@@ -110,21 +123,28 @@
         methods : {
             submitForm(){
                 if(this.user.id!=null && this.user.id > 0){
-                    this.register();
-                }else{
                     this.updateUser();
+                }else{
+                    this.register();
                 }
             },
             register(){
                 let _self = this;
-                Vue.axios.post('/api/user', { this.user }).then((response) => {
-                    _self.backToList();
+                console.log(this.user);
+                Vue.axios.post('/api/user/add',  _self.user, this.$parent.tokenHeader ).then((response) => {
+                    _self.msg = response.data.msg;
+                    if(response.data.data.id)
+                        _self.user.id = response.data.data.id
+                }).catch(error => {
+                    _self.msg = error.data.msg;
                 });
             },
             updateUser(){
                 let _self = this;
-                Vue.axios.update('/api/user/${this.user.id}/update', { this.user }).then((response) => {
-                    _self.backToList();
+                Vue.axios.put('/api/user/${this.user.id}/update',  _self.user, this.$parent.tokenHeader ).then((response) => {
+                    _self.msg = response.data.msg;
+                }).catch(error => {
+                    _self.msg = error.data.msg;
                 });
             },
             backToList(){

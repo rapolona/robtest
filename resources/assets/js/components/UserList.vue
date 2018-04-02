@@ -48,15 +48,15 @@
     export default {
         data : function() {
             return {
-                users : {},
+                users : [],
                 ids : [],
                 id  : null
             };
         },
         created(){
             let _self =  this;
-            Vue.axios.post('/api/users', { this.user }).then((response) => {
-                _self.users = response.data;
+            Vue.axios.get('/api/users',  this.user, this.$parent.tokenHeader ).then((response) => {
+                _self.users = response.data.data;
             });
         },
         methods : {
