@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-
+use App\Exceptions\UsernameNotAvailableException;
+use App\Exceptions\EmailNotAvailableException;
 use App\Exceptions\NoAvailableUserException;
 use App\Exceptions\UserDeleteFailedException;
 use App\Exceptions\UserUpdateFailedException;
@@ -33,6 +34,24 @@ class UserService implements UserServiceInterface
 
     public function createUser(Request $request)
     {
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users',
+            'username' => 'required|unique:users'
+        ]);
+
+        if($validator->fails()){
+            $validateEmail = $validator->errors()->first('email');
+            if(!empty($validateEmail)){
+                throw New EmailNotAvailableException;
+            }
+
+            $validateUsername = $validator->errors()->first('username');
+            if(!empty($validateUsername)){
+                throw New UsernameNotAvailableException;
+            }
+        }
+
 
         $user = $this->userRepository->create([
             'firstname' => $request->firstname,

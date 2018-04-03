@@ -12,13 +12,11 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th><input type="checkbox" /> </th>
+                        <th></th>
                         <th>#</th>
                         <th>Name</th>
                         <th>Username</th>
                         <th>Email</th>
-                        <th>Address</th>
-                        <th>Phone Number</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -29,16 +27,17 @@
                         <td>{{ user.firstname }}</td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
-                        <td>{{ user.profile.address }}</td>
-                        <td>{{ user.profile.phone_number }}</td>
                         <td>
-                            <button :data-id="user.id" class="btn btn-primary">Update</button>
-                            <button :data-id="user.id" class="btn btn-danger">Delete</button>
+                            <button :data-id="user.id" @click="editUser" class="btn btn-primary">Edit</button>
+                            <button :data-id="user.id"  class="btn btn-danger" v-confirm="{ok : dialog => deleteUser(dialog, user.id), cancel : doNothing, message : 'Continue to delete this record?' }">Delete</button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div class="col-md-12 text-right">
+            <button class="btn btn-primary"  v-confirm="{ok : dialog => deleteUsers(dialog), cancel : doNothing, message : 'Continue to delete selected records?' }">Delete Selected</button>
         </div>
     </div>
     </transition>
@@ -54,21 +53,42 @@
             };
         },
         created(){
-            let _self =  this;
-            Vue.axios.get('/api/users', {} , this.$parent.tokenHeader ).then((response) => {
-                _self.users = response.data.data;
-            });
+            this.fetchList();
         },
         methods : {
+            fetchList(){
+                let _self =  this;
+                _self.users = [];
+                Vue.axios.get('/api/users', {} , this.$parent.tokenHeader ).then((response) => {
+                    _self.users = response.data.data;
+                });
+            },
             gotToForm(){
                 this.$parent.showForm = true;
                 this.$parent.showList = false;
             },
-            deleteUser(){
-
+            editUser(event){
+                this.$parent.userId = event.currentTarget.getAttribute('data-id');
+                this.gotToForm();
             },
-            deleteUsers(){
-
+            deleteUser(dialog, id){
+                Vue.axios.delete('/api/user/' + id, {} , this.$parent.tokenHeader ).then((response) => {
+                    console.log(response);
+                });
+                dialog.close();
+                this.fetchList();
+            },
+            deleteUsers(dialog){
+                Vue.axios.delete('/api/users', {
+                    ids : this.ids.join(',')
+                } , this.$parent.tokenHeader ).then((response) => {
+                    console.log(response);
+                });
+                dialog.close();
+                this.fetchList();
+            },
+            doNothing (){
+                // do nothing
             }
         }
     }

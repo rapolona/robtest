@@ -7,6 +7,8 @@ use App\Exceptions\UserDeleteFailedException;
 use App\Exceptions\UserUpdateFailedException;
 use App\Exceptions\UserCreateFailedException;
 use App\Exceptions\UserInvalidException;
+use App\Exceptions\UsernameNotAvailableException;
+use App\Exceptions\EmailNotAvailableException;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Http\Request;
 use Response;
@@ -32,13 +34,13 @@ class UserController extends Controller
     {
         try{
             $users = $this->userService->getAllUser($request);
-            return Response::json(['status'=>'success', 'data' => $users]);
+            return Response::json(['data' => $users], 200);
         } catch(\NoAvailableUserException $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\Exception $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         }
     }
 
@@ -46,13 +48,13 @@ class UserController extends Controller
     {
         try{
             $response = $this->userService->deleteUsers($request);
-            return Response::json(['status'=>'success', 'data' => $response]);
+            return Response::json(['data' => $response], 200);
         } catch(\UserDeleteFailedException $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\Exception $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         }
     }
 
@@ -60,13 +62,13 @@ class UserController extends Controller
     {
         try{
             $user = $this->userService->getUser($id);
-            return Response::json(['status'=>'success', 'data' => $user]);
+            return Response::json([ 'data' => $user], 200);
         } catch(\NoAvailableUserException $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json([ 'data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\Exception $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json([ 'data' => [], 'msg' => $e->getMessage() ], 400);
         }
     }
 
@@ -74,13 +76,19 @@ class UserController extends Controller
     {
         try{
             $response = $this->userService->createUser($request);
-            return Response::json(['status'=>'success', 'data' => $response]);
+            return Response::json(['data' => $response], 200);
+        } catch(\UsernameNotAvailableException $e){
+            Log::error($e->getMessage());
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
+        } catch(\EmailNotAvailableException $e){
+            Log::error($e->getMessage());
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\UserCreateFailedException $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\Exception $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         }
     }
 
@@ -88,13 +96,13 @@ class UserController extends Controller
     {
         try{
             $response = $this->userService->updateUser($id, $request);
-            return Response::json(['status'=>'success', 'data' => $response]);
+            return Response::json(['data' => $response], 200);
         } catch(\UserUpdateFailedException $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\Exception $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         }
     }
 
@@ -102,13 +110,13 @@ class UserController extends Controller
     {
         try{
             $response = $this->userService->deleteUser($id);
-            return Response::json(['status'=>'success', 'data' => $response]);
+            return Response::json([ 'data' => $response], 200);
         } catch(\UserDeleteFailedException $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json(['data' => [], 'msg' => $e->getMessage() ], 400);
         } catch(\Exception $e){
             Log::error($e->getMessage());
-            return Response::json(['status'=>'failed', 'data' => [], 'msg' => $e->getMessage() ]);
+            return Response::json([ 'data' => [], 'msg' => $e->getMessage() ], 400);
         }
     }
 

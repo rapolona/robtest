@@ -54367,7 +54367,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -54378,19 +54377,44 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     created: function created() {
-        var _self = this;
-        Vue.axios.get('/api/users', {}, this.$parent.tokenHeader).then(function (response) {
-            _self.users = response.data.data;
-        });
+        this.fetchList();
     },
 
     methods: {
+        fetchList: function fetchList() {
+            var _self = this;
+            _self.users = [];
+            Vue.axios.get('/api/users', {}, this.$parent.tokenHeader).then(function (response) {
+                _self.users = response.data.data;
+            });
+        },
         gotToForm: function gotToForm() {
             this.$parent.showForm = true;
             this.$parent.showList = false;
         },
-        deleteUser: function deleteUser() {},
-        deleteUsers: function deleteUsers() {}
+        editUser: function editUser(event) {
+            this.$parent.userId = event.currentTarget.getAttribute('data-id');
+            this.gotToForm();
+        },
+        deleteUser: function deleteUser(dialog, id) {
+            Vue.axios.delete('/api/user/' + id, {}, this.$parent.tokenHeader).then(function (response) {
+                console.log(response);
+            });
+            dialog.close();
+            this.fetchList();
+        },
+        deleteUsers: function deleteUsers(dialog) {
+            Vue.axios.delete('/api/users', {
+                ids: this.ids.join(',')
+            }, this.$parent.tokenHeader).then(function (response) {
+                console.log(response);
+            });
+            dialog.close();
+            this.fetchList();
+        },
+        doNothing: function doNothing() {
+            // do nothing
+        }
     }
 });
 
@@ -54421,7 +54445,7 @@ var render = function() {
           _c("table", { staticClass: "table table-striped" }, [
             _c("thead", [
               _c("tr", [
-                _c("th", [_c("input", { attrs: { type: "checkbox" } })]),
+                _c("th"),
                 _vm._v(" "),
                 _c("th", [_vm._v("#")]),
                 _vm._v(" "),
@@ -54430,10 +54454,6 @@ var render = function() {
                 _c("th", [_vm._v("Username")]),
                 _vm._v(" "),
                 _c("th", [_vm._v("Email")]),
-                _vm._v(" "),
-                _c("th", [_vm._v("Address")]),
-                _vm._v(" "),
-                _c("th", [_vm._v("Phone Number")]),
                 _vm._v(" "),
                 _c("th", [_vm._v("Action")])
               ])
@@ -54492,23 +54512,35 @@ var render = function() {
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(user.email))]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(user.profile.address))]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(user.profile.phone_number))]),
-                  _vm._v(" "),
                   _c("td", [
                     _c(
                       "button",
                       {
                         staticClass: "btn btn-primary",
-                        attrs: { "data-id": user.id }
+                        attrs: { "data-id": user.id },
+                        on: { click: _vm.editUser }
                       },
-                      [_vm._v("Update")]
+                      [_vm._v("Edit")]
                     ),
                     _vm._v(" "),
                     _c(
                       "button",
                       {
+                        directives: [
+                          {
+                            name: "confirm",
+                            rawName: "v-confirm",
+                            value: {
+                              ok: function(dialog) {
+                                return _vm.deleteUser(dialog, user.id)
+                              },
+                              cancel: _vm.doNothing,
+                              message: "Continue to delete this record?"
+                            },
+                            expression:
+                              "{ok : dialog => deleteUser(dialog, user.id), cancel : doNothing, message : 'Continue to delete this record?' }"
+                          }
+                        ],
                         staticClass: "btn btn-danger",
                         attrs: { "data-id": user.id }
                       },
@@ -54520,6 +54552,31 @@ var render = function() {
             )
           ])
         ])
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-12 text-right" }, [
+        _c(
+          "button",
+          {
+            directives: [
+              {
+                name: "confirm",
+                rawName: "v-confirm",
+                value: {
+                  ok: function(dialog) {
+                    return _vm.deleteUsers(dialog)
+                  },
+                  cancel: _vm.doNothing,
+                  message: "Continue to delete selected records?"
+                },
+                expression:
+                  "{ok : dialog => deleteUsers(dialog), cancel : doNothing, message : 'Continue to delete selected records?' }"
+              }
+            ],
+            staticClass: "btn btn-primary"
+          },
+          [_vm._v("Delete Selected")]
+        )
       ])
     ])
   ])
@@ -54703,10 +54760,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 postal_code: null,
                 phone_number: null
             },
-            msg: null
+            msg: null,
+            alertClass: 'alert-danger'
         };
     },
-    created: function created() {},
+    created: function created() {
+        var _self = this;
+
+        if (this.$parent.userId == null) {
+            return;
+        }
+        this.user.id = this.$parent.userId;
+        Vue.axios.get('/api/user/' + this.user.id, {}, this.$parent.tokenHeader).then(function (response) {
+            var uData = response.data.data;
+
+            _self.user = {
+                id: uData.id,
+                firstname: uData.firstname,
+                lastname: uData.lastname,
+                username: uData.username,
+                email: uData.email,
+                password: null,
+                address: uData.profile.address,
+                postal_code: uData.profile.postal_code,
+                phone_number: uData.profile.phone_number
+            };
+        });
+        this.$parent.userId = null;
+    },
 
     methods: {
         submitForm: function submitForm() {
@@ -54720,6 +54801,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _self = this;
             _self.$validator.validateAll().then(function (result) {
                 if (!result) {
+                    alert('Please complete form.');
                     return;
                 }
 
@@ -54729,21 +54811,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         register: function register() {
             var _self = this;
             _self.validateInput(function () {
-                Vue.axios.post('/api/user/add', _self.user, this.$parent.tokenHeader).then(function (response) {
-                    _self.msg = response.data.msg;
+                Vue.axios.post('/api/user/add', _self.user, _self.$parent.tokenHeader).then(function (response) {
+                    _self.msg = 'Successfully Added';
+                    _self.alertClass = 'alert-success';
                     if (response.data.data.id) _self.user.id = response.data.data.id;
                 }).catch(function (error) {
-                    _self.msg = error.data.msg;
+                    _self.alertClass = 'alert-danger';
+                    if (error.response) {
+                        _self.msg = error.response.data.msg;
+                    } else {
+                        _self.msg = 'Error, please contact admin.';
+                        console.log(error);
+                    }
                 });
             });
         },
         updateUser: function updateUser() {
             var _self = this;
             _self.validateInput(function () {
-                Vue.axios.put('/api/user/' + _self.user.id + '/update', _self.user, this.$parent.tokenHeader).then(function (response) {
-                    _self.msg = response.data.msg;
+                Vue.axios.put('/api/user/' + _self.user.id + '/update', _self.user, _self.$parent.tokenHeader).then(function (response) {
+                    _self.msg = 'Successfully updated';
+                    _self.alertClass = 'alert-success';
                 }).catch(function (error) {
-                    _self.msg = error.data.msg;
+                    _self.alertClass = 'alert-danger';
+                    _self.msg = 'Updating error, Please contact admin';
                 });
             });
         },
@@ -54780,7 +54871,11 @@ var render = function() {
         ? _c("div", { staticClass: "col-md-12" }, [
             _c(
               "div",
-              { staticClass: "alert alert-danger", attrs: { role: "alert" } },
+              {
+                staticClass: "alert",
+                class: _vm.alertClass,
+                attrs: { role: "alert" }
+              },
               [
                 _c("span", {
                   staticClass: "glyphicon glyphicon-exclamation-sign",
@@ -55055,10 +55150,8 @@ var render = function() {
                     {
                       name: "validate",
                       rawName: "v-validate",
-                      value:
-                        "required|alpha_num|confirmed:{password_confirmation}",
-                      expression:
-                        "'required|alpha_num|confirmed:{password_confirmation}'"
+                      value: "required",
+                      expression: "'required'"
                     }
                   ],
                   staticClass: "form-control input-sm",
@@ -55104,8 +55197,8 @@ var render = function() {
                     {
                       name: "validate",
                       rawName: "v-validate",
-                      value: "required|alpha_num",
-                      expression: "'required|alpha_num'"
+                      value: "required|confirmed:password",
+                      expression: "'required|confirmed:password'"
                     }
                   ],
                   staticClass: "form-control input-sm",
@@ -55155,8 +55248,8 @@ var render = function() {
                       {
                         name: "validate",
                         rawName: "v-validate",
-                        value: "required|alpha",
-                        expression: "'required|alpha'"
+                        value: "required",
+                        expression: "'required'"
                       }
                     ],
                     staticClass: "form-control input-sm",
@@ -55218,8 +55311,8 @@ var render = function() {
                       {
                         name: "validate",
                         rawName: "v-validate",
-                        value: "required|alpha",
-                        expression: "'required|alpha'"
+                        value: "required|alpha_num",
+                        expression: "'required|alpha_num'"
                       }
                     ],
                     staticClass: "form-control input-sm",
@@ -55279,8 +55372,8 @@ var render = function() {
                       {
                         name: "validate",
                         rawName: "v-validate",
-                        value: "required|alpha",
-                        expression: "'required|alpha'"
+                        value: "required",
+                        expression: "'required'"
                       }
                     ],
                     staticClass: "form-control input-sm",
